@@ -1,21 +1,47 @@
-import {useEffect} from 'react';
-import {View, Text, TextInput, TouchableOpacity, FlatList} from 'react-native';
+import {useEffect, useState} from 'react';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  FlatList,
+  Image,
+} from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
 import {useDispatch, useSelector} from 'react-redux';
 import {actions} from '../actions';
 import {RootState} from '../store';
+import {useNavigation} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
 const Main = () => {
+  const [search, setSearch] = useState('');
+  const navigation = useNavigation<NativeStackNavigationProp<any>>();
   const dispatch = useDispatch();
   useEffect(() => {
-    getData();
+    dispatch({type: actions.FETCH_DATA_REQUEST});
+    dispatch({type: actions.FETCH_REPO_MAIN});
   }, []);
-  const getData = () => dispatch({type: actions.FETCH_DATA_REQUEST});
-  const data = useSelector((state: RootState) => state.reducer.data);
-  // console.log(data);
+  const repo = useSelector((state: RootState) => state.reducer);
+  const filterRepo = repo.data.filter((r: any) =>
+    r.name.toLowerCase().includes(search.toLowerCase()),
+  );
+  //   console.log(search);
+  //   console.log(filterRepo);
 
-  const Item = ({name, description}: {name: string; description: string}) => (
+  const Item = ({data}: {data: any}) => (
     <TouchableOpacity
+      onPress={() => {
+        navigation.navigate('Details', {
+          name: data.name,
+          description: data.description,
+          stars: data.stargazers_count,
+          forks: data.forks_count,
+          watchers: data.watchers_count,
+          language: data.language,
+          imgUrl: data.owner.avatar_url,
+        });
+      }}
       style={{
         borderWidth: 1,
         borderColor: 'white',
@@ -25,57 +51,91 @@ const Main = () => {
       }}>
       <View>
         <Text style={{fontSize: 20, color: '#1f6feb', fontWeight: '700'}}>
-          {name}
+          {data.name}
         </Text>
-        <Text style={{fontSize: 15, color: 'grey'}}>{description}</Text>
+        <Text style={{fontSize: 15, color: 'grey'}}>{data.description}</Text>
       </View>
     </TouchableOpacity>
   );
 
-  return (
-    <View style={{flex: 1}}>
-      <View
-        style={{
-          width: '100%',
-          height: '15%',
-          backgroundColor: 'white',
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}>
-        <Icon name="github" size={60} color={'black'} />
-        <Text
-          style={{
-            fontSize: 17,
-            marginTop: 8,
-            color: 'black',
-            fontWeight: '700',
-          }}>
-          React Native Community
-        </Text>
+  const header = () => (
+    <View
+      style={{
+        padding: 10,
+        marginBottom: 20,
+        marginTop: 10,
+        width: '100%',
+        flex: 1,
+      }}>
+      <View style={{flexDirection: 'row'}}>
+        {repo.data2?.avatar_url && (
+          <Image
+            source={{uri: repo.data2.avatar_url}}
+            style={{
+              width: 70,
+              height: 70,
+              borderRadius: 10,
+              objectFit: 'cover',
+            }}
+          />
+        )}
+        <View style={{flex: 1, marginLeft: 10}}>
+          <Text
+            style={{
+              fontSize: 18,
+              color: 'white',
+              fontWeight: '700',
+            }}>
+            {repo?.data2.name}
+          </Text>
+          <Text
+            style={{
+              fontSize: 15,
+              color: 'white',
+            }}>
+            {repo?.data2.description}
+          </Text>
+        </View>
       </View>
-      <View style={{alignItems: 'center', flex: 1}}>
-        <TextInput
-          placeholder="Search..."
-          placeholderTextColor={'black'}
+    </View>
+  );
+
+  return (
+    <View style={{width: '100%', height: '100%'}}>
+      <View style={{alignItems: 'center', flex: 1, backgroundColor: '#0a0e12'}}>
+        <View
           style={{
-            backgroundColor: 'lightgrey',
-            width: '90%',
-            borderRadius: 10,
-            marginVertical: 35,
-            fontSize: 15,
-          }}
-        />
-        <FlatList
-          data={data}
-          contentContainerStyle={{
-            alignSelf: 'center',
-            width: '90%',
-            flexGrow: 1,
-          }}
-          renderItem={({item, index}: {item: any; index: number}) => (
-            <Item key={index} name={item.name} description={item.description} />
-          )}
-        />
+            width: '100%',
+            alignItems: 'center',
+            justifyContent: 'center',
+            paddingTop: 15,
+            paddingBottom: 20,
+            backgroundColor: '#010307',
+          }}>
+          <Icon name="github" size={30} color={'white'} />
+          <TextInput
+            onChangeText={e => setSearch(e)}
+            placeholder="Search..."
+            placeholderTextColor={'black'}
+            style={{
+              marginTop: 10,
+              marginLeft: 5,
+              backgroundColor: 'lightgrey',
+              width: '90%',
+              borderRadius: 10,
+              fontSize: 15,
+            }}
+          />
+        </View>
+        <View style={{paddingHorizontal: 20, flex: 1, width: '100%'}}>
+          <FlatList
+            data={filterRepo}
+            ListHeaderComponent={header}
+            renderItem={({item, index}: {item: any; index: number}) => (
+              <Item key={index} data={item} />
+            )}
+          />
+        </View>
       </View>
     </View>
   );

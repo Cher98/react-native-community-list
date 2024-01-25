@@ -6,6 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import KeyboardDismiss from './components/KeyboardDismiss';
 import { Provider } from 'react-redux';
 import store from './store';
+import Details from './screens/Details';
 
 
 const App = () => {
@@ -19,11 +20,12 @@ const App = () => {
               initialRouteName='Main'
               screenOptions={{
                 contentStyle: {
-                  backgroundColor: 'black',
+                  backgroundColor: '#0a0e12',
                 },
                 headerShown: false,
               }}>
               <Stack.Screen name='Main' component={Main} />
+              <Stack.Screen name='Details' component={Details} />
             </Stack.Navigator>
           </NavigationContainer>
         </SafeAreaView>
