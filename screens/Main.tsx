@@ -9,6 +9,7 @@ import {
   Button,
   Pressable,
   ActivityIndicator,
+  Platform,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
 import {useDispatch, useSelector} from 'react-redux';
@@ -130,6 +131,8 @@ const Main = () => {
               width: '90%',
               borderRadius: 10,
               fontSize: 15,
+              height: 30,
+              padding: 20,
             }}
           />
         </View>
