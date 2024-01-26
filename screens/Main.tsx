@@ -143,6 +143,7 @@ const Main = () => {
               fontSize: 15,
               height: 50,
               padding: 15,
+              color: 'black',
             }}
           />
         </View>
