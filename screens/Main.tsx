@@ -23,8 +23,6 @@ const Main = () => {
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
   const dispatch = useDispatch();
-  const getData = () => dispatch({type: actions.FETCH_DATA_REQUEST});
-  const data = useSelector((state: RootState) => state.reducer.data);
   useEffect(() => {
     dispatch({type: actions.FETCH_DATA_REQUEST});
     dispatch({type: actions.FETCH_REPO_MAIN});
