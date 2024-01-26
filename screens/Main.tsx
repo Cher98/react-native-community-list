@@ -131,8 +131,8 @@ const Main = () => {
               width: '90%',
               borderRadius: 10,
               fontSize: 15,
-              height: 30,
-              padding: 20,
+              height: 50,
+              padding: 15,
             }}
           />
         </View>
