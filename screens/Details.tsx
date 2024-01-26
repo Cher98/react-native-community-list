@@ -82,15 +82,17 @@ const Details = () => {
             <AntDesign name="eyeo" size={40} color={'white'} />
             <Text style={[styles.font, styles.stats]}>{watchers}</Text>
           </View>
-          <View
-            style={{
-              marginTop: 18,
-              borderWidth: 1,
-              borderColor: 'white',
-              borderRadius: 18,
-            }}>
-            <Text style={[styles.font, styles.stats]}>{language}</Text>
-          </View>
+          {language && (
+            <View
+              style={{
+                marginTop: 18,
+                borderWidth: 1,
+                borderColor: 'white',
+                borderRadius: 18,
+              }}>
+              <Text style={[styles.font, styles.stats]}>{language}</Text>
+            </View>
+          )}
         </ScrollView>
       </View>
     </View>

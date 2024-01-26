@@ -34,8 +34,6 @@ const Main = () => {
   const filterRepo = repo.data.filter((r: any) =>
     r.name.toLowerCase().includes(search.toLowerCase()),
   );
-  //   console.log(search);
-  //   console.log(filterRepo);
 
   const Item = ({data}: {data: any}) => (
     <TouchableOpacity
@@ -135,10 +133,9 @@ const Main = () => {
             }}
           />
         </View>
-        <View style={{paddingHorizontal: 20, flex: 1, width: '100%'}}>
+        <View style={{flex: 1, width: '90%'}}>
           <FlatList
             style={{flex: 1}}
-            // contentContainerStyle={{flex: 1}}
             data={filterRepo}
             ListHeaderComponent={header}
             renderItem={({item, index}: {item: any; index: number}) => (
