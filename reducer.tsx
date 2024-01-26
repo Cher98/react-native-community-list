@@ -2,6 +2,7 @@ import {actions} from './actions';
 
 const initialState = {
   loading: false,
+  moreLoading: false,
   data: [],
   data2: [],
   endOfList: false,
@@ -13,6 +14,11 @@ export default (state = initialState, action: any) => {
       return {
         ...state,
         loading: true,
+      };
+    case actions.FETCH_MORE_LOADING:
+      return {
+        ...state,
+        moreLoading: true,
       };
     case actions.FETCH_DATA_SAGA:
       return {
@@ -33,7 +39,7 @@ export default (state = initialState, action: any) => {
         ...state,
         data: action.payload.result,
         endOfList: action.payload.listEnded,
-        loading: false,
+        moreLoading: false,
       };
     default:
       return state;

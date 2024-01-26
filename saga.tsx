@@ -22,6 +22,7 @@ const getAllData = async () => {
 
 export function* fetchInitial(): any {
   try {
+    yield put({type: actions.FETCH_LOADING});
     let result = yield call(getData, {count: itemsPerPage});
     yield put({type: actions.FETCH_DATA_SAGA, payload: result.data});
   } catch (e) {
@@ -32,6 +33,7 @@ export function* fetchInitial(): any {
 
 export function* fetchRepoMain(): any {
   try {
+    yield put({type: actions.FETCH_LOADING});
     let result = yield call(getRepoMain);
     yield put({type: actions.FETCH_DATA_SUCCESS, payload: result.data});
   } catch (e) {
@@ -42,7 +44,7 @@ export function* fetchRepoMain(): any {
 
 export function* fetchMoreData({payload}: ReturnType<any>): any {
   try {
-    yield put({type: actions.FETCH_LOADING});
+    yield put({type: actions.FETCH_MORE_LOADING});
     let checkAllData = yield call(getAllData);
     let result = yield call(getData, {count: itemsPerPage + payload.count});
     let allDataLength = checkAllData.data.length;

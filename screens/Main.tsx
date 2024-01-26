@@ -29,6 +29,7 @@ const Main = () => {
   }, []);
   const repo = useSelector((state: RootState) => state.reducer);
   const loading = repo.loading;
+  const moreLoading = repo.moreLoading;
   const endOfList = repo.endOfList;
   const filterRepo = repo.data.filter((r: any) =>
     r.name.toLowerCase().includes(search.toLowerCase()),
@@ -105,6 +106,17 @@ const Main = () => {
     </View>
   );
 
+  const loader = () => (
+    <View
+      style={{
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingBottom: 15,
+      }}>
+      <ActivityIndicator size="large" color="#0000ff" />
+    </View>
+  );
+
   return (
     <View style={{width: '100%', height: '100%'}}>
       <View style={{alignItems: 'center', flex: 1, backgroundColor: '#0a0e12'}}>
@@ -134,62 +146,59 @@ const Main = () => {
             }}
           />
         </View>
-        <View style={{flex: 1, width: '90%'}}>
-          <FlatList
-            style={{flex: 1}}
-            data={filterRepo}
-            ListHeaderComponent={header}
-            renderItem={({item, index}: {item: any; index: number}) => (
-              <Item key={index} data={item} />
-            )}
-            ListFooterComponent={() =>
-              endOfList ? (
-                <View style={{paddingBottom: 15}}>
-                  <Text
-                    style={{
-                      color: 'white',
-                      textAlignVertical: 'center',
-                      textAlign: 'center',
-                    }}>
-                    NO MORE TO SHOW.
-                  </Text>
-                </View>
-              ) : (
-                <>
-                  {loading ? (
-                    <View
+        {loading ? (
+          <>{loader()}</>
+        ) : (
+          <View style={{flex: 1, width: '90%'}}>
+            <FlatList
+              style={{flex: 1}}
+              data={filterRepo}
+              ListHeaderComponent={header}
+              renderItem={({item, index}: {item: any; index: number}) => (
+                <Item key={index} data={item} />
+              )}
+              ListFooterComponent={() =>
+                endOfList ? (
+                  <View style={{paddingBottom: 15}}>
+                    <Text
                       style={{
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        paddingBottom: 15,
+                        color: 'white',
+                        textAlignVertical: 'center',
+                        textAlign: 'center',
                       }}>
-                      <ActivityIndicator size="large" color="#0000ff" />
-                    </View>
-                  ) : (
-                    <Pressable
-                      onPress={() => {
-                        setItemsPerPage(itemsPerPage + 5);
-                        dispatch({
-                          type: actions.FETCH_MORE_DATA,
-                          payload: {count: itemsPerPage},
-                        });
-                      }}
-                      style={{
-                        alignItems: 'center',
-                        paddingBottom: 15,
-                      }}>
-                      <Text
-                        style={{color: 'white', textAlignVertical: 'center'}}>
-                        LOAD MORE
-                      </Text>
-                    </Pressable>
-                  )}
-                </>
-              )
-            }
-            onEndReachedThreshold={0.3}
-          />
-        </View>
+                      NO MORE TO SHOW.
+                    </Text>
+                  </View>
+                ) : (
+                  <>
+                    {moreLoading ? (
+                      <>{loader()}</>
+                    ) : (
+                      <Pressable
+                        onPress={() => {
+                          setItemsPerPage(itemsPerPage + 5);
+                          dispatch({
+                            type: actions.FETCH_MORE_DATA,
+                            payload: {count: itemsPerPage},
+                          });
+                        }}
+                        style={{
+                          alignItems: 'center',
+                          paddingBottom: 15,
+                        }}>
+                        <Text
+                          style={{color: 'white', textAlignVertical: 'center'}}>
+                          LOAD MORE
+                        </Text>
+                      </Pressable>
+                    )}
+                  </>
+                )
+              }
+              onEndReachedThreshold={0.3}
+            />
+          </View>
+        )}
       </View>
     </View>
   );
