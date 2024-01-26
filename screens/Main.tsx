@@ -6,6 +6,9 @@ import {
   TouchableOpacity,
   FlatList,
   Image,
+  Button,
+  Pressable,
+  ActivityIndicator,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
 import {useDispatch, useSelector} from 'react-redux';
@@ -16,13 +19,18 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
 const Main = () => {
   const [search, setSearch] = useState('');
+  const [itemsPerPage, setItemsPerPage] = useState(10);
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
   const dispatch = useDispatch();
+  const getData = () => dispatch({type: actions.FETCH_DATA_REQUEST});
+  const data = useSelector((state: RootState) => state.reducer.data);
   useEffect(() => {
     dispatch({type: actions.FETCH_DATA_REQUEST});
     dispatch({type: actions.FETCH_REPO_MAIN});
   }, []);
   const repo = useSelector((state: RootState) => state.reducer);
+  const loading = repo.loading;
+  const endOfList = repo.endOfList;
   const filterRepo = repo.data.filter((r: any) =>
     r.name.toLowerCase().includes(search.toLowerCase()),
   );
@@ -44,7 +52,7 @@ const Main = () => {
       }}
       style={{
         borderWidth: 1,
-        borderColor: 'white',
+        borderColor: 'grey',
         borderRadius: 10,
         padding: 10,
         marginBottom: 20,
@@ -129,11 +137,59 @@ const Main = () => {
         </View>
         <View style={{paddingHorizontal: 20, flex: 1, width: '100%'}}>
           <FlatList
+            style={{flex: 1}}
+            // contentContainerStyle={{flex: 1}}
             data={filterRepo}
             ListHeaderComponent={header}
             renderItem={({item, index}: {item: any; index: number}) => (
               <Item key={index} data={item} />
             )}
+            ListFooterComponent={() =>
+              endOfList ? (
+                <View style={{paddingBottom: 15}}>
+                  <Text
+                    style={{
+                      color: 'white',
+                      textAlignVertical: 'center',
+                      textAlign: 'center',
+                    }}>
+                    NO MORE TO SHOW.
+                  </Text>
+                </View>
+              ) : (
+                <>
+                  {loading ? (
+                    <View
+                      style={{
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        paddingBottom: 15,
+                      }}>
+                      <ActivityIndicator size="large" color="#0000ff" />
+                    </View>
+                  ) : (
+                    <Pressable
+                      onPress={() => {
+                        setItemsPerPage(itemsPerPage + 5);
+                        dispatch({
+                          type: actions.FETCH_MORE_DATA,
+                          payload: {count: itemsPerPage},
+                        });
+                      }}
+                      style={{
+                        alignItems: 'center',
+                        paddingBottom: 15,
+                      }}>
+                      <Text
+                        style={{color: 'white', textAlignVertical: 'center'}}>
+                        LOAD MORE
+                      </Text>
+                    </Pressable>
+                  )}
+                </>
+              )
+            }
+            onEndReachedThreshold={0.3}
           />
         </View>
       </View>
